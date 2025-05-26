@@ -12,7 +12,7 @@ class BlogController extends Controller
      */
     public function index()
     {
-        return 'api';
+        return 'blogs';
         //
     }
 

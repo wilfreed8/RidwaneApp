@@ -20,7 +20,7 @@ class AnnouncementController extends Controller implements HasMiddleware
     }
     public function index()
     {
-        $announcements = Announcement::where('publish_date', '>=', now())
+        $announcements = Announcement::where('publish_date', '<=', now())
         ->orderBy('publish_date', 'desc')
         ->get();
          return $announcements;
@@ -46,7 +46,7 @@ class AnnouncementController extends Controller implements HasMiddleware
      */
     public function show(int $announcement,Request $request)
     {
-        $announcements = $request->user()->announcements()->findOrFail($announcement);
+        $announcements = Announcement::findOrFail($announcement);
        return $announcements;
         //
     }
@@ -61,7 +61,7 @@ class AnnouncementController extends Controller implements HasMiddleware
             'content' => 'required',
             'publish_date' => 'required|date',
         ]);
-        $count = $request->user()->announcements()->where('id',"=",$announcement)->update($validated);
+        $count = Announcement::where('id',"=",$announcement)->update($validated);
         if($count==0){
           return ["message" => 'you don\'t own this event',
            ];
@@ -77,7 +77,7 @@ class AnnouncementController extends Controller implements HasMiddleware
      */
     public function destroy(int $announcement,Request $request)
     {
-        $count = $request->user()->announcements()->where('id',"=",$announcement)->delete();
+        $count = Announcement::where('id',"=",$announcement)->delete();
         if($count==0){
           return ["message" => 'you don\'t own this event',
            ];

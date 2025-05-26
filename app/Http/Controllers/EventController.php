@@ -20,8 +20,8 @@ class EventController extends Controller implements HasMiddleware
     }
     public function index(Request $request)
     {    
-      $userId = $request->user()?->id; // récupère l'ID de l'utilisateur
-        $events = Event::where('is_active', true)->where('created_by', "=",$userId)->orderBy('start_datetime')
+      // récupère l'ID de l'utilisateur
+        $events = Event::where('is_active', true)->orderBy('start_datetime')
                ->get();
         return $events ;
         //
@@ -63,7 +63,7 @@ class EventController extends Controller implements HasMiddleware
      */
 
     public function show(int $event,Request $request)
-    {   $event = $request->user()->events()->findOrFail($event);
+    {   $event = Event::findOrFail($event);
        return $event;
         //
     }
@@ -88,7 +88,7 @@ class EventController extends Controller implements HasMiddleware
                 'created_by' => auth()->id(),
                 'remaining_quota' => $request->max_participants,
         ]);*/
-       $count = $request->user()->events()->where('id',"=",$event)->update([...$validated,'remaining_quota'=>$validated['max_participants']]);
+       $count = Event::where('id',"=",$event)->update([...$validated,'remaining_quota'=>$validated['max_participants']]);
               if($count==0){
                 return ["message" => 'you don\'t own this event',
                  ];
@@ -104,12 +104,12 @@ class EventController extends Controller implements HasMiddleware
      */
     public function destroy(int $event,Request $request)
     {
-       $event = $request->user()->events()->where('id',$event)->delete();
+       $event = Event::where('id',$event)->delete();
        if($event==0){
         return ["message" => 'you don\'t own this event'];
       }
       return [
-        'message' => `the event {$event->id} was successfull deleted`
+        'message' => `the event  was successfull deleted`
       ];
     }
 }
